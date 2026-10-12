@@ -84,13 +84,28 @@ Restart the TUI (or the OpenCode service) after adding it.
 - Output is polled once per second per running shell (last ~4KB), so overhead
   is negligible.
 
+## Tests
+
+Pure helpers live in `progress.ts` so they can be unit-tested without the TUI
+runtime. Runs on stock Node, no dependencies to install:
+
+```sh
+npm test   # node --test progress.test.ts
+```
+
+Covers `sniffProgress` (explicit `%`, progressing `N/M`, ANSI/`\r` handling,
+date/path rejection, percent-over-counter priority), `progressBar`,
+`formatElapsed`, `clip`/`oneLine`, `headlineText`, and `asString`.
+
 ## Layout
 
 ```
 opencode-terminal-progress/
-  index.ts       # server entry (standard server + TUI layout)
-  tui.tsx        # TUI entry: sidebar section, detail panel, commands
-  package.json   # "./tui" export for package installs
+  index.ts         # server entry (standard server + TUI layout)
+  tui.tsx          # TUI entry: sidebar section, detail panel, commands
+  progress.ts      # pure helpers (percentage sniffing, bars, formatting)
+  progress.test.ts # unit tests (node:test, zero dependencies)
+  package.json     # "./tui" export for package installs
 ```
 
 ## License

@@ -4,6 +4,9 @@
   "description": "Live terminal progress in the OpenCode TUI: real percentages in the sidebar and a /terminals detail panel",
   "type": "module",
   "license": "MIT",
+  "scripts": {
+    "test": "node --test progress.test.ts"
+  },
   "exports": {
     ".": "./index.ts",
     "./tui": "./tui.tsx"
