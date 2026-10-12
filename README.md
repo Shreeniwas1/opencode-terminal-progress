@@ -31,6 +31,31 @@ the command already prints:
 Anything else keeps the spinner + elapsed-time display. A percentage is never
 guessed.
 
+## How this differs from the default terminal view
+
+By default, OpenCode shows running shells inline in the session transcript as
+`bash` tool parts (`!cmd` output arrives as a tool result, details toggled with
+`/details`). There is no dedicated terminal list: the built-in slash list has
+no `/terminals` command, and a tool entry shows command text plus output when
+done — no pid, cwd, elapsed timer, or percentage while it runs. Interruption is
+via `escape`, completion awareness via optional `attention` notifications
+(see [TUI](https://opencode.ai/docs/tui/) and
+[bash tool](https://opencode.ai/docs/tools/#bash) docs).
+
+This plugin adds a persistent, glanceable layer on top of that:
+
+| Default | This plugin |
+| --- | --- |
+| Buried in transcript, scroll to find | Always-visible `Running terminals (N)` sidebar section while anything runs |
+| Spinner / output only | Live `42% ████░░░░░░` + bar when the command prints its own cues (`42%`, progressing `12/200`) |
+| No pid / cwd / elapsed while running | Per-command elapsed time + pid in sidebar, plus cwd in `/terminals` detail panel |
+| No terminal command | `/terminals` slash command + `Terminal progress` palette entry (`terminal-progress.open`) |
+
+Why use it: for long builds, test suites, migrations, or `docker`/`npm`/`pip`
+runs, you get at-a-glance progress without scrolling the transcript or toggling
+details. For short foreground commands the default inline view is fine — install
+this when percent, pid/cwd, and an always-visible status matter.
+
 ## Install
 
 Requires OpenCode 2.x.
