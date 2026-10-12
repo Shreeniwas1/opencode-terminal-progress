@@ -1,6 +1,6 @@
 {
   "name": "opencode-terminal-progress",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Live terminal progress in the OpenCode TUI: real percentages in the sidebar and a /terminals detail panel",
   "type": "module",
   "license": "MIT",

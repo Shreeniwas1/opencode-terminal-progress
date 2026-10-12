@@ -22,11 +22,24 @@ While a shell command runs, the plugin shows what it's doing:
 
 A true percentage needs a known total, which only the command itself knows.
 The plugin polls each running shell's live output and reads the progress cues
-the command already prints:
+the command already prints — every value traces to numbers the tool printed
+together, so a percentage is never guessed:
 
-- explicit `42%` readouts (pip, npm, curl, docker, …) — shown immediately;
-- `12/200` style counters (test runners, scripts) — shown once seen
-  *progressing*, which rejects dates, paths, and other static fractions.
+| Cue | Example | Who prints it |
+| --- | --- | --- |
+| Explicit `%` (decimals ok) | `42%`, `42.1%`, `[ 40%]`, `( 12%)` | pip, pytest, phpunit, apt, brew, pacman, yt-dlp, curl bars, composer, cmake |
+| Byte fractions (units normalize, even `kB` vs `GB`) | `25.6MB/101.2MB`, `18.2/18.2 MB` | docker pull, pip, maven, aws, rclone, gcloud, pacman |
+| Labeled counters (trusted immediately) | `Step 4/8`, `[12/200]`, `12 of 200`, `12/200 Test #12`, `Jobs: 12/235` | docker build, yarn, ninja, waf, bazel, buildx, cabal, cypress, ctest, buck2 |
+| Inverted remaining | `to-check=10/200` (10 remain → 95%) | rsync `--info=progress2` |
+| TAP plan + results | `1..200` plus `ok 12` lines | prove, node-tap, TAP producers |
+| Duration + timestamp | `Duration: 00:01:00` plus `time=00:00:42` | ffmpeg |
+| Bare `12/200` fractions | shown once seen *progressing* with a stable total | test runners, scripts, kubectl `1/2` |
+
+Rejected on purpose: `deflated 42%` compression ratios (describe a file, not
+a task), dates/paths/static fractions, and tools that never print a
+co-located total — pnpm's aggregated counts, cargo/playwright's declared
+total plus countable lines, jest/vitest/mocha summaries, npm/uv/poetry,
+`make`, `go build`. Those keep the spinner + elapsed-time display instead.
 
 Anything else keeps the spinner + elapsed-time display. A percentage is never
 guessed.
