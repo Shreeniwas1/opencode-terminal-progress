@@ -288,11 +288,18 @@ export default Plugin.define({
                 </box>
               )}
             </For>
-            <text fg={context.theme.text.muted}>esc back to typing</text>
+            <text fg={context.theme.text.muted}>esc / ← back to typing</text>
           </box>
         </Show>
       ),
     })
+
+    // Closes our panel and hands focus back to the prompt. Returns false so the
+    // key behaves exactly as before whenever our panel is not open.
+    const backToTyping = (): false | void => {
+      if (context.ui.panel.current()?.name !== PANEL) return false
+      context.ui.panel.close()
+    }
 
     context.keymap.layer(() => ({
       mode: "global",
@@ -307,6 +314,20 @@ export default Plugin.define({
           run: () => {
             context.ui.panel.open(PANEL)
           },
+        },
+        {
+          id: "terminal-progress.back",
+          title: "Back to typing",
+          description: "Close the terminals panel and return to the prompt",
+          bind: "escape",
+          run: () => backToTyping(),
+        },
+        {
+          id: "terminal-progress.left",
+          title: "Back to typing",
+          description: "Close the terminals panel and return to the prompt",
+          bind: "left",
+          run: () => backToTyping(),
         },
       ],
     }))

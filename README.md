@@ -14,10 +14,9 @@ While a shell command runs, the plugin shows what it's doing:
   ```
 - **Detail panel** — the same per command with working directory. Open it with
   the `/terminals` slash command, the command palette (`Terminal progress`),
-  or by dispatching `terminal-progress.open`. Dismiss it with the host's
-  native keys (`Escape`); the hint line at the panel bottom says so. (Custom
-  keybindings are not possible: this CLI build fails plugin setup with
-  "Keymap.Provider is missing" for any `bind` key.)
+  or by dispatching `terminal-progress.open`. Dismiss it with `Escape` or `←`,
+  which close the panel and return focus to the prompt (both are inert while
+  the panel is closed).
 
 ## How the percentage works
 
