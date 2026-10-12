@@ -1,3 +1,6 @@
+// Unit tests for the pure helpers in progress.ts (percentage sniffing, bar
+// rendering, and text formatting used by the sidebar/panel). These run on
+// stock Node with no dependencies: `npm test`.
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 import {
@@ -10,6 +13,7 @@ import {
   sniffProgress,
 } from "./progress.ts"
 
+// Elapsed-time label under each sidebar row (e.g. "12s · pid 14440").
 describe("formatElapsed", () => {
   it("shows seconds under a minute", () => {
     assert.equal(formatElapsed(0), "0s")
@@ -30,6 +34,7 @@ describe("formatElapsed", () => {
   })
 })
 
+// Command-line cleanup so long commands fit on one sidebar/panel row.
 describe("oneLine / clip", () => {
   it("collapses whitespace", () => {
     assert.equal(oneLine("  npm   run\n  build\t"), "npm run build")
@@ -46,6 +51,7 @@ describe("oneLine / clip", () => {
   })
 })
 
+// Ten-cell bar shown next to the percent (e.g. "42% ████░░░░░░").
 describe("progressBar", () => {
   it("renders ten cells", () => {
     assert.equal(progressBar(0), "░░░░░░░░░░")
@@ -59,6 +65,9 @@ describe("progressBar", () => {
   })
 })
 
+// Core rule: a percentage is only shown when the command prints its own cues
+// ("42%", or an N/M counter seen progressing). Otherwise the result stays at
+// the previous value (or null), so the UI never guesses.
 describe("sniffProgress", () => {
   it("reads an explicit percentage immediately", () => {
     const found = sniffProgress("Download 42% complete", undefined, null)
@@ -81,11 +90,14 @@ describe("sniffProgress", () => {
     assert.equal(found.value, 42)
   })
   it("does not trust an N/M counter on first sight", () => {
+    // Poll 1 only records the counter; a static fraction (date, path) never
+    // reaches poll 2, so no percentage ever appears for it.
     const first = sniffProgress("test 12/200", undefined, null)
     assert.equal(first.value, null)
     assert.deepEqual(first.memory, { total: 200, done: 12 })
   })
   it("trusts an N/M counter once it progresses with the same total", () => {
+    // Poll 2 sees the same total with a larger done count: real progress.
     const first = sniffProgress("test 12/200", undefined, null)
     const second = sniffProgress("test 12/200\ntest 100/200", first.memory, first.value)
     assert.equal(second.value, 50)
@@ -107,6 +119,7 @@ describe("sniffProgress", () => {
   })
 })
 
+// Full one-line status per shell: spinner + optional "% + bar" + command.
 describe("headlineText", () => {
   it("shows spinner, percent, and bar when progress is known", () => {
     assert.equal(headlineText("⠋", 42, "npm install", 24), "⠋ 42% ████░░░░░░ npm install")
@@ -120,6 +133,7 @@ describe("headlineText", () => {
   })
 })
 
+// Narrowing helper used to read the session owner off shell metadata.
 describe("asString", () => {
   it("passes strings through and maps anything else to undefined", () => {
     assert.equal(asString("abc"), "abc")
