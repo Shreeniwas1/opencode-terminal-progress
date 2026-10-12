@@ -1,0 +1,19 @@
+{
+  "name": "opencode-terminal-progress",
+  "version": "0.1.0",
+  "description": "Live terminal progress in the OpenCode TUI: real percentages in the sidebar and a /terminals detail panel",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.tsx"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.0.27"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.5.8",
+    "@opentui/solid": ">=0.5.8",
+    "solid-js": ">=1.9.0"
+  }
+}
