@@ -261,10 +261,9 @@ export default Plugin.define({
     })
 
     // Full detail panel, opened from the palette or the `/terminals` slash command.
-    // NOTE: keymap layers can only be created in setup() (global scope). The
-    // CLI build here has no Keymap.Provider above slot content, so a layer
-    // created inside the panel render fails setup — panel dismissal keys below
-    // live in the global layer and no-op (return false) unless our panel is open.
+    // NOTE: this CLI build cannot register `bind` keys from plugins (setup
+    // fails with "Keymap.Provider is missing"), so panel dismissal is left to
+    // the host's native keys. The hint line below advertises Escape.
     const stopPanel = context.ui.slot({
       append: "session.panel",
       render: (panel) => (
@@ -289,18 +288,11 @@ export default Plugin.define({
                 </box>
               )}
             </For>
-            <text fg={context.theme.text.muted}>esc / ← back to typing</text>
+            <text fg={context.theme.text.muted}>esc back to typing</text>
           </box>
         </Show>
       ),
     })
-
-    // Closes our panel and hands focus back to the prompt. Returns false so the
-    // key behaves exactly as before whenever our panel is not open.
-    const backToTyping = (): false | void => {
-      if (context.ui.panel.current()?.name !== PANEL) return false
-      context.ui.panel.close()
-    }
 
     context.keymap.layer(() => ({
       mode: "global",
@@ -315,20 +307,6 @@ export default Plugin.define({
           run: () => {
             context.ui.panel.open(PANEL)
           },
-        },
-        {
-          id: "terminal-progress.back",
-          title: "Back to typing",
-          description: "Close the terminals panel and return to the prompt",
-          bind: "escape",
-          run: () => backToTyping(),
-        },
-        {
-          id: "terminal-progress.left",
-          title: "Back to typing",
-          description: "Close the terminals panel and return to the prompt",
-          bind: "left",
-          run: () => backToTyping(),
         },
       ],
     }))
